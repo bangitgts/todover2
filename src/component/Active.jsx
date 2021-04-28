@@ -7,6 +7,7 @@ class Active extends Component {
         <td>
           <input type="text" className="form-control" />
         </td>
+        <td />
         <td>
           <select className="form-control">
             <option value={-1}>Tất Cả</option>

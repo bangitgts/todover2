@@ -18,6 +18,15 @@ class App extends Component {
     this.clickHidden = this.clickHidden.bind(this);
     this.setNonestate = this.setNonestate.bind(this);
   }
+  componentDidMount() {
+    if (localStorage && localStorage.getItem('data')){
+      var tasks =  JSON.parse(localStorage.getItem('data'))
+      this.setState({
+        data: tasks
+      })
+    }
+  }
+
   clickHidden() {
     if(this.state.isdisplayedForm && this.state.isactiveForm !==''){
       this.setState({
@@ -36,8 +45,31 @@ class App extends Component {
       isdisplayedForm: value
     })
   }
+  onReceive = (value) => {
+    let dataRev =  this.state.data;
+    dataRev.push(value);
+    this.setState({
+      data: dataRev
+    })
+    console.log(this.state)
+    localStorage.setItem('data', JSON.stringify(dataRev))
+  }
+  
   render() {
-    const toggleForm = this.state.isdisplayedForm === true && this.state.isdelForm === '' ? <AddForm isGetdel={this.setNonestate}/> : '' ;
+    const elementList = this.state.data.map((item,index) => {
+      return <TaskList
+        key = {item.id}
+        indexID = {++index}
+        nameJob = {item.nameJob}
+        isHide = {item.isStatus}
+        isDate = {item.date}
+        isTime = {item.time}
+      />
+    })
+
+    
+    const toggleForm = this.state.isdisplayedForm === true && this.state.isdelForm === '' ? <AddForm onGet = {this.onReceive} isGetdel={this.setNonestate}/> : '' ;
+   
     return (
       <div className="container">
         <div className="row">
@@ -60,13 +92,14 @@ class App extends Component {
                     <tr>
                       <th className="text-center">STT</th>
                       <th className="text-center">Tên</th>
+                      <th className="text-center">Thời gian thêm</th>
                       <th className="text-center">Trạng Thái</th>
                       <th className="text-center">Hành Động</th>
                     </tr>
                   </thead>
                   <tbody>
                     <Active/>
-                    <TaskList/>
+                    {elementList}
                   </tbody>
                 </table>
               </div>
